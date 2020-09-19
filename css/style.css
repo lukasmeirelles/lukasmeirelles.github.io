@@ -1,0 +1,23 @@
+.s_region {
+	fill: blue;
+}
+
+.se_region {
+	fill: yellow;
+}
+
+.n_region {
+	fill: pink;
+}
+
+.ne_region {
+	fill: red;
+}
+
+.co_region {
+	fill: green;
+}
+
+.brazil {
+	fill: brown;
+}
