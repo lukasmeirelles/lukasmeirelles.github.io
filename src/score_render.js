@@ -81,27 +81,27 @@ const render = (data, htmlComponent) => {
 }
 
 //3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores.json')
-d3.json('data/ch_scores.json')
+d3.json('data/ch_aggregated_scores.json')
 .then(data => {
 	render(data, '#ch_score')
 })
 
-d3.json('data/cn_scores.json')
+d3.json('data/cn_aggregated_scores.json')
 .then(data => {
 	render(data, '#cn_score')
 })
 
-d3.json('data/lc_scores.json')
+d3.json('data/lc_aggregated_scores.json')
 .then(data => {
 	render(data, '#lc_score')
 })
 
-d3.json('data/mt_scores.json')
+d3.json('data/mt_aggregated_scores.json')
 .then(data => {
 	render(data, '#mt_score')
 })
 
-d3.json('data/writing_scores.json')
+d3.json('data/writing_aggregated_scores.json')
 .then(data => {
 	render(data, '#writing_score')
 })

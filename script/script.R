@@ -26,7 +26,11 @@ rm(filtered_dataset)
 
 set_up_scores_per_state(real_candidates)
 
-
+save_ch_scores(real_candidates[real_candidates$ch_presence == 1,])
+save_cn_scores(real_candidates[real_candidates$cn_presence == 1,])
+save_lc_scores(real_candidates[real_candidates$lc_presence == 1,])
+save_mt_scores(real_candidates[real_candidates$mt_presence == 1,])
+save_writing_scores(real_candidates[real_candidates$lc_presence == 1,])
 
 
 
