@@ -1,8 +1,6 @@
-library('jsonlite')
-
 setwd("C:/Users/lucasm/Desktop/enem_panel_using_d3")
 
-source("script/score_extraction.R")
+source("script/set_up_scores_per_state.R")
 
 file_path = "C:/Users/lucasm/Desktop/microdados_enem_2019/DADOS/MICRODADOS_ENEM_2019.csv"
 
@@ -26,23 +24,33 @@ rm(original_dataset)
 real_candidates = filtered_dataset[filtered_dataset$training==0,]
 rm(filtered_dataset)
 
-states = sort(unique(real_candidates$state))
+set_up_scores_per_state(real_candidates)
 
-ch_scores = get_overall_cn_score(real_candidates[real_candidates$ch_presence == 1,])
-#ch_scores = data.frame(t(c('Brasil', NA, get_cn_score(real_candidates[real_candidates$ch_presence == 1,]))))
-#colnames(ch_scores) = c('State', 'Region', 'Min', 'Perc25', 'Median', 'Mean', 'Perc75', 'Max')
-for (state in states) {
-  #temp = data.frame( t(c(state, get_region(state), get_cn_score(real_candidates[real_candidates$state == state & real_candidates$ch_presence == 1,]))) )
-  #colnames(temp) = c('State', 'Region', 'Min', 'Perc25', 'Median', 'Mean', 'Perc75', 'Max')
-  
-  temp = get_cn_score_for_state(state, real_candidates[real_candidates$state == state & real_candidates$ch_presence == 1,])
 
-  ch_scores = rbind(ch_scores, 
-                    temp,
-                    make.row.names = FALSE
-  )
-}
-write_json(ch_scores, "C:/Users/lucasm/Desktop/cn_scores.json")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 summary(real_candidates$NU_NOTA_CH)
 summary(real_candidates$NU_NOTA_CN)

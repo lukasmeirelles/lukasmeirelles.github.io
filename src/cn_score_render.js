@@ -1,19 +1,18 @@
-const margin = {
-	top: 10,
-	bottom: 30,
-	right: 30,
-	left: 40
-}
-const width = 1280 - margin.left - margin.right
-const height = 350 - margin.top - margin.bottom
+const render = (data, htmlComponent) => {
+	const margin = {
+		top: 10,
+		bottom: 30,
+		right: 30,
+		left: 40
+	}
+	const width = 1280 - margin.left - margin.right
+	const height = 350 - margin.top - margin.bottom
 
-const svg = d3.select('#cn_score').append('svg')
-	.attr('width', `${width + margin.left + margin.right}`)
-	.attr('height', `${height + margin.top + margin.bottom}`)
-	.append("g")
-    	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-const render = (data) => {
+	const svg = d3.select(htmlComponent).append('svg')
+		.attr('width', `${width + margin.left + margin.right}`)
+		.attr('height', `${height + margin.top + margin.bottom}`)
+		.append("g")
+    		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
 	const maxScore = 1000
 	const brasilData = data.filter(item => item.State === 'Brasil')[0]
@@ -64,10 +63,7 @@ const render = (data) => {
     		.attr("width", boxWidth )
     		.attr("stroke", "black")
     		.attr("class", item => {
-    			console.log('aqui')
-    			console.log(item)
     			if (item.Region) {
-    				console.log(item.Region.toLowerCase())
     				return `${item.Region.toLowerCase()}_region`
     			}
     			return 'brazil'
@@ -84,9 +80,29 @@ const render = (data) => {
     		.style("width", 80)
 }
 
-//d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores.json')
+//3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores.json')
+d3.json('data/ch_scores.json')
+.then(data => {
+	render(data, '#ch_score')
+})
+
 d3.json('data/cn_scores.json')
 .then(data => {
-	render(data)
+	render(data, '#cn_score')
+})
+
+d3.json('data/lc_scores.json')
+.then(data => {
+	render(data, '#lc_score')
+})
+
+d3.json('data/mt_scores.json')
+.then(data => {
+	render(data, '#mt_score')
+})
+
+d3.json('data/writing_scores.json')
+.then(data => {
+	render(data, '#writing_score')
 })
 
