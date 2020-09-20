@@ -21,3 +21,13 @@
 .brazil {
 	fill: brown;
 }
+
+.chartTitle {
+	font-size: 2em;
+	fill: #635F5D;
+}
+
+text {
+  font-family: sans-serif;
+  text-anchor: middle;
+}

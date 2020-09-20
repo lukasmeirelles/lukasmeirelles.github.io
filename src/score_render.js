@@ -1,6 +1,6 @@
-const render = (data, htmlComponent) => {
+const render = ({data, htmlComponent, chartTitle}) => {
 	const margin = {
-		top: 10,
+		top: 40,
 		bottom: 30,
 		right: 30,
 		left: 40
@@ -12,12 +12,17 @@ const render = (data, htmlComponent) => {
 		.attr('width', `${width + margin.left + margin.right}`)
 		.attr('height', `${height + margin.top + margin.bottom}`)
 		.append("g")
-    		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    		.attr("transform", `translate(${margin.left}, ${margin.top})`)
 
 	const maxScore = 1000
 	const brasilData = data.filter(item => item.State === 'Brasil')[0]
 	const stateName = (item) => item.State
 
+    svg.append('text')
+        .attr('y', 0)
+        .attr('x', width/2)
+        .attr('class', 'chartTitle')
+        .text(chartTitle)
 
 	const xAxis = d3.scaleBand()
 		.range([ 0, width ])
@@ -80,29 +85,53 @@ const render = (data, htmlComponent) => {
     		.style("width", 80)
 }
 
-//3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores.json')
-d3.json('data/ch_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_aggregated_scores.json')
+//d3.json('data/ch_aggregated_scores.json')
 .then(data => {
-	render(data, '#ch_score')
+	render({ 
+        data: data, 
+        htmlComponent: '#ch_score',
+        chartTitle: 'Notas da prova de Ciências Humanas em 2019 nos estados brasileiros'
+    })
 })
 
-d3.json('data/cn_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_aggregated_scores.json')
+//d3.json('data/cn_aggregated_scores.json')
 .then(data => {
-	render(data, '#cn_score')
+	render({ 
+        data: data, 
+        htmlComponent: '#cn_score',
+        chartTitle: 'Notas da prova de Ciências da Natureza em 2019 nos estados brasileiros'
+    })
 })
 
-d3.json('data/lc_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_aggregated_scores.json')
+//d3.json('data/lc_aggregated_scores.json')
 .then(data => {
-	render(data, '#lc_score')
+	render({ 
+        data: data, 
+        htmlComponent: '#lc_score',
+        chartTitle: 'Notas da prova de Linguagens e Códigos em 2019 nos estados brasileiros'
+    })
 })
 
-d3.json('data/mt_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_aggregated_scores.json')
+//d3.json('data/mt_aggregated_scores.json')
 .then(data => {
-	render(data, '#mt_score')
+	render({ 
+        data: data, 
+        htmlComponent: '#mt_score',
+        chartTitle: 'Notas da prova de Matemática em 2019 nos estados brasileiros'
+    })
 })
 
-d3.json('data/writing_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_aggregated_scores.json')
+//d3.json('data/writing_aggregated_scores.json')
 .then(data => {
-	render(data, '#writing_score')
+	render({ 
+        data: data, 
+        htmlComponent: '#writing_score',
+        chartTitle: 'Notas da redação em 2019 nos estados brasileiros'
+    })
 })
 
