@@ -3,7 +3,7 @@ const render = ({data, htmlComponent, chartTitle}) => {
 		top: 40,
 		bottom: 30,
 		right: 30,
-		left: 40
+		left: 50
 	}
 	const width = 1280 - margin.left - margin.right
 	const height = 350 - margin.top - margin.bottom
@@ -13,9 +13,7 @@ const render = ({data, htmlComponent, chartTitle}) => {
 		.attr('height', `${height + margin.top + margin.bottom}`)
 		.append("g")
     		.attr("transform", `translate(${margin.left}, ${margin.top})`)
-
-	const maxScore = 1000
-	const brasilData = data.filter(item => item.State === 'Brasil')[0]
+	
 	const stateName = (item) => item.State
 
     svg.append('text')
@@ -24,7 +22,7 @@ const render = ({data, htmlComponent, chartTitle}) => {
         .attr('class', 'chartTitle')
         .text(chartTitle)
 
-	const xAxis = d3.scaleBand()
+	const xAxisScale = d3.scaleBand()
 		.range([ 0, width ])
 		.domain(data.map( stateName ))
 		.paddingInner(1)
@@ -32,28 +30,33 @@ const render = ({data, htmlComponent, chartTitle}) => {
 
 	svg.append("g")
 		.attr("transform", "translate(0," + height + ")")
-		.call(d3.axisBottom(xAxis))
+		.call(d3.axisBottom(xAxisScale))
 
-	const yAxis = d3.scaleLinear()
+	const yAxisScale = d3.scaleLinear()
 		.domain([0, 1000])
 		.range([height, 0])
 
-	svg.append("g").call(d3.axisLeft(yAxis))
+    const yAxis = d3.axisLeft(yAxisScale)
+        .tickPadding(2)
 
+	svg.append("g").call(yAxis)
+
+    const brasilData = data.filter(item => item.State === 'Brasil')[0]
+    const lastState = data[data.length-1]
     svg.append("line")
     	.attr("x1", "0")
-    	.attr("x2", `${width}`)
-    	.attr("y1", yAxis(brasilData.Mean))
-    	.attr("y2", yAxis(brasilData.Mean))
+    	.attr("x2", xAxisScale(stateName(lastState)))
+    	.attr("y1", yAxisScale(brasilData.Mean))
+    	.attr("y2", yAxisScale(brasilData.Mean))
     	.attr("stroke", "black")
 
 	svg.selectAll("vertLines").data(data)
     .enter()
     	.append("line")
-    		.attr("x1", item => xAxis(stateName(item)) )
-    		.attr("x2", item => xAxis(stateName(item)) )
-    		.attr("y1", (item) => yAxis(item.Min) )
-    		.attr("y2", (item) => yAxis(item.Max) )
+    		.attr("x1", item => xAxisScale(stateName(item)) )
+    		.attr("x2", item => xAxisScale(stateName(item)) )
+    		.attr("y1", (item) => yAxisScale(item.Min) )
+    		.attr("y2", (item) => yAxisScale(item.Max) )
     		.attr("stroke", "red")
     		.style("width", 40)
 
@@ -62,9 +65,9 @@ const render = ({data, htmlComponent, chartTitle}) => {
 	svg.selectAll("boxes").data(data)
     .enter()
     	.append("rect")
-    		.attr("x", function(d){return(xAxis(stateName(d))-boxWidth/2)})
-    		.attr("y", function(d){return(yAxis(d.Perc75))})
-    		.attr("height", function(d){return(yAxis(d.Perc25)-yAxis(d.Perc75))})
+    		.attr("x", function(d){return(xAxisScale(stateName(d))-boxWidth/2)})
+    		.attr("y", function(d){return(yAxisScale(d.Perc75))})
+    		.attr("height", function(d){return(yAxisScale(d.Perc25)-yAxisScale(d.Perc75))})
     		.attr("width", boxWidth )
     		.attr("stroke", "black")
     		.attr("class", item => {
@@ -77,10 +80,10 @@ const render = ({data, htmlComponent, chartTitle}) => {
 	svg.selectAll("medianLines").data(data)
     .enter()
     	.append("line")
-    		.attr("x1", function(d){return(xAxis(stateName(d))-boxWidth/2) })
-    		.attr("x2", function(d){return(xAxis(stateName(d))+boxWidth/2) })
-    		.attr("y1", function(d){return(yAxis(d.Median))})
-    		.attr("y2", function(d){return(yAxis(d.Median))})
+    		.attr("x1", function(d){return(xAxisScale(stateName(d))-boxWidth/2) })
+    		.attr("x2", function(d){return(xAxisScale(stateName(d))+boxWidth/2) })
+    		.attr("y1", function(d){return(yAxisScale(d.Median))})
+    		.attr("y2", function(d){return(yAxisScale(d.Median))})
     		.attr("stroke", "black")
     		.style("width", 80)
 }
