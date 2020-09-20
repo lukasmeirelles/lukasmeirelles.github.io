@@ -1,7 +1,7 @@
 const render = ({data, htmlComponent, chartTitle}) => {
 	const margin = {
 		top: 40,
-		bottom: 30,
+		bottom: 50,
 		right: 30,
 		left: 50
 	}
@@ -22,13 +22,16 @@ const render = ({data, htmlComponent, chartTitle}) => {
         .attr('class', 'chartTitle')
         .text(chartTitle)
 
+    const chartGroup = svg.append('g')
+        .attr('transform', 'translate(0, 13)')
+
 	const xAxisScale = d3.scaleBand()
 		.range([ 0, width ])
 		.domain(data.map( stateName ))
 		.paddingInner(1)
 		.paddingOuter(.5)
 
-	svg.append("g")
+	chartGroup.append("g")
 		.attr("transform", "translate(0," + height + ")")
 		.call(d3.axisBottom(xAxisScale))
 
@@ -39,18 +42,18 @@ const render = ({data, htmlComponent, chartTitle}) => {
     const yAxis = d3.axisLeft(yAxisScale)
         .tickPadding(2)
 
-	svg.append("g").call(yAxis)
+	chartGroup.append("g").call(yAxis)
 
     const brasilData = data.filter(item => item.State === 'Brasil')[0]
     const lastState = data[data.length-1]
-    svg.append("line")
+    chartGroup.append("line")
     	.attr("x1", "0")
     	.attr("x2", xAxisScale(stateName(lastState)))
     	.attr("y1", yAxisScale(brasilData.Mean))
     	.attr("y2", yAxisScale(brasilData.Mean))
     	.attr("stroke", "black")
 
-	svg.selectAll("vertLines").data(data)
+	chartGroup.selectAll("vertLines").data(data)
     .enter()
     	.append("line")
     		.attr("x1", item => xAxisScale(stateName(item)) )
@@ -62,7 +65,7 @@ const render = ({data, htmlComponent, chartTitle}) => {
 
     const boxWidth = 10
 
-	svg.selectAll("boxes").data(data)
+	chartGroup.selectAll("boxes").data(data)
     .enter()
     	.append("rect")
     		.attr("x", function(d){return(xAxisScale(stateName(d))-boxWidth/2)})
@@ -77,7 +80,7 @@ const render = ({data, htmlComponent, chartTitle}) => {
     			return 'brazil'
     		})
 
-	svg.selectAll("medianLines").data(data)
+	chartGroup.selectAll("medianLines").data(data)
     .enter()
     	.append("line")
     		.attr("x1", function(d){return(xAxisScale(stateName(d))-boxWidth/2) })
