@@ -1,6 +1,6 @@
 source("script/utils.R")
 
-score_names = c('State', 'Region', 'Min', 'Perc25', 'Median', 'Mean', 'Perc75', 'Max')
+score_names = c('State', 'Region', 'Min', 'Perc25', 'Median', 'Mean', 'Perc75', 'Max', 'Zeros')
 
 # CH scores
 ch_scores <- function(array) {
@@ -9,13 +9,19 @@ ch_scores <- function(array) {
 }
 
 get_overall_ch_score <- function(array) {
-  temp = data.frame(t(c('Brasil', NA, ch_scores(array))))
+  total = nrow(array)
+  zeros = nrow(array[array$ch_score == 0,])
+  
+  temp = data.frame(t(c('Brasil', NA, ch_scores(array[array$ch_score != 0,]), zeros/total)))
   colnames(temp) = score_names
   temp
 }
 
 get_ch_score_for_state <- function(state, array) {
-  temp = data.frame( t(c(state, get_region(state), ch_scores(array))) )
+  total = nrow(array)
+  zeros = nrow(array[array$ch_score == 0,])
+  
+  temp = data.frame( t(c(state, get_region(state), ch_scores(array[array$ch_score != 0,]), zeros/total)) )
   colnames(temp) = score_names
   temp
 }
@@ -27,13 +33,19 @@ cn_scores <- function(array) {
 }
 
 get_overall_cn_score <- function(array) {
-  temp = data.frame(t(c('Brasil', NA, cn_scores(array))))
+  total = nrow(array)
+  zeros = nrow(array[array$cn_score == 0,])
+  
+  temp = data.frame(t(c('Brasil', NA, cn_scores(array[array$cn_score != 0,]), zeros/total)))
   colnames(temp) = score_names
   temp
 }
 
 get_cn_score_for_state <- function(state, array) {
-  temp = data.frame( t(c(state, get_region(state), cn_scores(array))) )
+  total = nrow(array)
+  zeros = nrow(array[array$cn_score == 0,])
+  
+  temp = data.frame( t(c(state, get_region(state), cn_scores(array[array$cn_score != 0,]), zeros/total)) )
   colnames(temp) = score_names
   temp
 }
@@ -45,13 +57,19 @@ lc_scores <- function(array) {
 }
 
 get_overall_lc_score <- function(array) {
-  temp = data.frame(t(c('Brasil', NA, lc_scores(array))))
+  total = nrow(array)
+  zeros = nrow(array[array$lc_score == 0,])
+  
+  temp = data.frame(t(c('Brasil', NA, lc_scores(array[array$lc_score != 0,]), zeros/total)) )
   colnames(temp) = score_names
   temp
 }
 
 get_lc_score_for_state <- function(state, array) {
-  temp = data.frame( t(c(state, get_region(state), lc_scores(array))) )
+  total = nrow(array)
+  zeros = nrow(array[array$lc_score == 0,])
+  
+  temp = data.frame( t(c(state, get_region(state), lc_scores(array[array$lc_score != 0,]), zeros/total)) )
   colnames(temp) = score_names
   temp
 }
@@ -63,13 +81,19 @@ mt_scores <- function(array) {
 }
 
 get_overall_mt_score <- function(array) {
-  temp = data.frame(t(c('Brasil', NA, mt_scores(array))))
+  total = nrow(array)
+  zeros = nrow(array[array$mt_score == 0,])
+  
+  temp = data.frame(t(c('Brasil', NA, mt_scores(array[array$mt_score != 0,]), zeros/total)) )
   colnames(temp) = score_names
   temp
 }
 
 get_mt_score_for_state <- function(state, array) {
-  temp = data.frame( t(c(state, get_region(state), mt_scores(array))) )
+  total = nrow(array)
+  zeros = nrow(array[array$mt_score == 0,])
+  
+  temp = data.frame( t(c(state, get_region(state), mt_scores(array[array$mt_score != 0,]), zeros/total)) )
   colnames(temp) = score_names
   temp
 }
@@ -81,13 +105,19 @@ writing_scores <- function(array) {
 }
 
 get_overall_writing_score <- function(array) {
-  temp = data.frame(t(c('Brasil', NA, writing_scores(array))))
+  total = nrow(array)
+  zeros = nrow(array[array$writing_score == 0,])
+  
+  temp = data.frame(t(c('Brasil', NA, writing_scores(array[array$writing_score != 0,]), zeros/total)) )
   colnames(temp) = score_names
   temp
 }
 
 get_writing_score_for_state <- function(state, array) {
-  temp = data.frame( t(c(state, get_region(state), writing_scores(array))) )
+  total = nrow(array)
+  zeros = nrow(array[array$writing_score == 0,])
+  
+  temp = data.frame( t(c(state, get_region(state), writing_scores(array[array$writing_score != 0,]), zeros/total)) )
   colnames(temp) = score_names
   temp
 }

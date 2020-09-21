@@ -2,7 +2,7 @@ const render = ({data, htmlComponent, chartTitle}) => {
 	const margin = {
 		top: 40,
 		bottom: 50,
-		right: 30,
+		right: 40,
 		left: 50
 	}
 	const width = 1280 - margin.left - margin.right
@@ -35,22 +35,24 @@ const render = ({data, htmlComponent, chartTitle}) => {
 		.attr("transform", "translate(0," + height + ")")
 		.call(d3.axisBottom(xAxisScale))
 
-	const yAxisScale = d3.scaleLinear()
+	const yAxisScoreScale = d3.scaleLinear()
 		.domain([0, 1000])
 		.range([height, 0])
 
-    const yAxis = d3.axisLeft(yAxisScale)
+    const yAxisScore = d3.axisRight(yAxisScoreScale)
         .tickPadding(2)
 
-	chartGroup.append("g").call(yAxis)
+	chartGroup.append("g")
+        .attr('transform', `translate(${width}, 0)`)
+        .call(yAxisScore)
 
     const brasilData = data.filter(item => item.State === 'Brasil')[0]
     const lastState = data[data.length-1]
     chartGroup.append("line")
     	.attr("x1", "0")
     	.attr("x2", xAxisScale(stateName(lastState)))
-    	.attr("y1", yAxisScale(brasilData.Mean))
-    	.attr("y2", yAxisScale(brasilData.Mean))
+    	.attr("y1", yAxisScoreScale(brasilData.Mean))
+    	.attr("y2", yAxisScoreScale(brasilData.Mean))
     	.attr("stroke", "black")
 
 	chartGroup.selectAll("vertLines").data(data)
@@ -58,8 +60,8 @@ const render = ({data, htmlComponent, chartTitle}) => {
     	.append("line")
     		.attr("x1", item => xAxisScale(stateName(item)) )
     		.attr("x2", item => xAxisScale(stateName(item)) )
-    		.attr("y1", (item) => yAxisScale(item.Min) )
-    		.attr("y2", (item) => yAxisScale(item.Max) )
+    		.attr("y1", (item) => yAxisScoreScale(item.Min) )
+    		.attr("y2", (item) => yAxisScoreScale(item.Max) )
     		.attr("stroke", "red")
     		.style("width", 40)
 
@@ -69,8 +71,8 @@ const render = ({data, htmlComponent, chartTitle}) => {
     .enter()
     	.append("rect")
     		.attr("x", function(d){return(xAxisScale(stateName(d))-boxWidth/2)})
-    		.attr("y", function(d){return(yAxisScale(d.Perc75))})
-    		.attr("height", function(d){return(yAxisScale(d.Perc25)-yAxisScale(d.Perc75))})
+    		.attr("y", function(d){return(yAxisScoreScale(d.Perc75))})
+    		.attr("height", function(d){return(yAxisScoreScale(d.Perc25)-yAxisScoreScale(d.Perc75))})
     		.attr("width", boxWidth )
     		.attr("stroke", "black")
     		.attr("class", item => {
@@ -85,8 +87,8 @@ const render = ({data, htmlComponent, chartTitle}) => {
     	.append("line")
     		.attr("x1", function(d){return(xAxisScale(stateName(d))-boxWidth/2) })
     		.attr("x2", function(d){return(xAxisScale(stateName(d))+boxWidth/2) })
-    		.attr("y1", function(d){return(yAxisScale(d.Median))})
-    		.attr("y2", function(d){return(yAxisScale(d.Median))})
+    		.attr("y1", function(d){return(yAxisScoreScale(d.Median))})
+    		.attr("y2", function(d){return(yAxisScoreScale(d.Median))})
     		.attr("stroke", "black")
     		.style("width", 80)
 }
@@ -97,7 +99,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
 	render({ 
         data: data, 
         htmlComponent: '#ch_score',
-        chartTitle: 'Notas da prova de Ciências Humanas em 2019 nos estados brasileiros'
+        chartTitle: 'Performance na prova de Ciências Humanas em 2019 nos estados brasileiros'
     })
 })
 
@@ -107,7 +109,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
 	render({ 
         data: data, 
         htmlComponent: '#cn_score',
-        chartTitle: 'Notas da prova de Ciências da Natureza em 2019 nos estados brasileiros'
+        chartTitle: 'Performance na prova de Ciências da Natureza em 2019 nos estados brasileiros'
     })
 })
 
@@ -117,7 +119,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
 	render({ 
         data: data, 
         htmlComponent: '#lc_score',
-        chartTitle: 'Notas da prova de Linguagens e Códigos em 2019 nos estados brasileiros'
+        chartTitle: 'Performance na prova de Linguagens e Códigos em 2019 nos estados brasileiros'
     })
 })
 
@@ -127,7 +129,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
 	render({ 
         data: data, 
         htmlComponent: '#mt_score',
-        chartTitle: 'Notas da prova de Matemática em 2019 nos estados brasileiros'
+        chartTitle: 'Performance na prova de Matemática em 2019 nos estados brasileiros'
     })
 })
 
@@ -137,7 +139,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
 	render({ 
         data: data, 
         htmlComponent: '#writing_score',
-        chartTitle: 'Notas da redação em 2019 nos estados brasileiros'
+        chartTitle: 'Performance na redação em 2019 nos estados brasileiros'
     })
 })
 
