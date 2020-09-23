@@ -198,7 +198,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
 .then(data => {
     render({ 
         data: data, 
-        htmlComponent: '#mt_score',
+        htmlComponent: '#mt_score_private',
         chartTitle: 'Escolas privadas'
     })
 })
@@ -208,7 +208,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
 .then(data => {
     render({ 
         data: data, 
-        htmlComponent: '#mt_score',
+        htmlComponent: '#mt_score_public',
         chartTitle: 'Escolas públicas'
     })
 })
