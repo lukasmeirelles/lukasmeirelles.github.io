@@ -39,18 +39,17 @@ const render = ({data, htmlComponent, chartTitle}) => {
 		.domain([0, 1000])
 		.range([height, 0])
 
-    const yAxisScore = d3.axisRight(yAxisScoreScale)
+    const yAxisScore = d3.axisLeft(yAxisScoreScale)
         .tickPadding(2)
 
 	chartGroup.append("g")
-        .attr('transform', `translate(${width}, 0)`)
         .call(yAxisScore)
 
     const brasilData = data.filter(item => item.State === 'Brasil')[0]
     const lastState = data[data.length-1]
     chartGroup.append("line")
-    	.attr("x1", xAxisScale(stateName(brasilData)))
-    	.attr("x2", `${width}`)
+    	.attr("x1", 0)
+    	.attr("x2", xAxisScale(stateName(lastState)))
     	.attr("y1", yAxisScoreScale(brasilData.Mean))
     	.attr("y2", yAxisScoreScale(brasilData.Mean))
     	.attr("stroke", "black")
