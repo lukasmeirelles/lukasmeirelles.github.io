@@ -49,8 +49,8 @@ const render = ({data, htmlComponent, chartTitle}) => {
     const brasilData = data.filter(item => item.State === 'Brasil')[0]
     const lastState = data[data.length-1]
     chartGroup.append("line")
-    	.attr("x1", "0")
-    	.attr("x2", xAxisScale(stateName(lastState)))
+    	.attr("x1", xAxisScale(stateName(brasilData)))
+    	.attr("x2", `${width}`)
     	.attr("y1", yAxisScoreScale(brasilData.Mean))
     	.attr("y2", yAxisScoreScale(brasilData.Mean))
     	.attr("stroke", "black")
@@ -93,53 +93,153 @@ const render = ({data, htmlComponent, chartTitle}) => {
     		.style("width", 80)
 }
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_global.json')
 //d3.json('data/ch_aggregated_scores.json')
 .then(data => {
-	render({ 
+    render({ 
         data: data, 
         htmlComponent: '#ch_score',
         chartTitle: 'Performance na prova de Ciências Humanas em 2019 nos estados brasileiros'
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_private.json')
+//d3.json('data/ch_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#ch_score_private',
+        chartTitle: 'Escolas privadas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_public.json')
+//d3.json('data/ch_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#ch_score_public',
+        chartTitle: 'Escolas públicas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_global.json')
 //d3.json('data/cn_aggregated_scores.json')
 .then(data => {
-	render({ 
+    render({ 
         data: data, 
         htmlComponent: '#cn_score',
         chartTitle: 'Performance na prova de Ciências da Natureza em 2019 nos estados brasileiros'
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_private.json')
+//d3.json('data/cn_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#cn_score_private',
+        chartTitle: 'Escolas privadas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_public.json')
+//d3.json('data/cn_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#cn_score_public',
+        chartTitle: 'Escolas públicas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_global.json')
 //d3.json('data/lc_aggregated_scores.json')
 .then(data => {
-	render({ 
+    render({ 
         data: data, 
         htmlComponent: '#lc_score',
         chartTitle: 'Performance na prova de Linguagens e Códigos em 2019 nos estados brasileiros'
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_private.json')
+//d3.json('data/lc_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#lc_score_private',
+        chartTitle: 'Escolas privadas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_public.json')
+//d3.json('data/lc_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#lc_score_public',
+        chartTitle: 'Escolas públicas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_global.json')
 //d3.json('data/mt_aggregated_scores.json')
 .then(data => {
-	render({ 
+    render({ 
         data: data, 
         htmlComponent: '#mt_score',
         chartTitle: 'Performance na prova de Matemática em 2019 nos estados brasileiros'
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_private.json')
+//d3.json('data/mt_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#mt_score',
+        chartTitle: 'Escolas privadas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_public.json')
+//d3.json('data/mt_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#mt_score',
+        chartTitle: 'Escolas públicas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_global.json')
 //d3.json('data/writing_aggregated_scores.json')
 .then(data => {
-	render({ 
+    render({ 
         data: data, 
         htmlComponent: '#writing_score',
         chartTitle: 'Performance na redação em 2019 nos estados brasileiros'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_private.json')
+//d3.json('data/writing_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#writing_score_private',
+        chartTitle: 'Escolas privadas'
+    })
+})
+
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_public.json')
+//d3.json('data/writing_aggregated_scores.json')
+.then(data => {
+    render({ 
+        data: data, 
+        htmlComponent: '#writing_score_public',
+        chartTitle: 'Escolas públicas'
     })
 })
 
