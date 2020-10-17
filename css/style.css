@@ -31,3 +31,7 @@
 text {
 	font-family: sans-serif;
 }
+
+rect {
+	stroke-width: 0;
+}

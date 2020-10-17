@@ -24,10 +24,12 @@ rm(original_dataset)
 real_candidates = filtered_dataset[filtered_dataset$training==0,]
 rm(filtered_dataset)
 
-set_up_scores_per_state(real_candidates)
+set_up_scores_per_state(real_candidates, "quantis")
 
-
-
+incomes = unique(real_candidates$income_code)
+for (income in incomes) {
+  set_up_scores_per_state(real_candidates[real_candidates$income_code == income,], paste("income_", income, sep = ""))
+}
 
 
 

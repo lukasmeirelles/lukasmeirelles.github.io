@@ -64,7 +64,7 @@ const render = ({data, htmlComponent, chartTitle}) => {
     		.attr("stroke", "red")
     		.style("width", 40)
 
-    const boxWidth = 10
+    const boxWidth = 35
 
 	chartGroup.selectAll("boxes").data(data)
     .enter()
