@@ -92,7 +92,7 @@ const render = ({data, htmlComponent, chartTitle}) => {
     		.style("width", 80)
 }
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_global.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_quantis_global.json')
 //d3.json('data/ch_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -102,7 +102,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_private.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_quantis_private.json')
 //d3.json('data/ch_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -112,7 +112,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_public.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_quantis_public.json')
 //d3.json('data/ch_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -122,7 +122,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_global.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_quantis_global.json')
 //d3.json('data/cn_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -132,7 +132,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_private.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_quantis_private.json')
 //d3.json('data/cn_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -142,7 +142,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_public.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_quantis_public.json')
 //d3.json('data/cn_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -152,7 +152,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_global.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_quantis_global.json')
 //d3.json('data/lc_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -162,7 +162,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_private.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_quantis_private.json')
 //d3.json('data/lc_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -172,7 +172,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_public.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_quantis_public.json')
 //d3.json('data/lc_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -182,7 +182,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_global.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_quantis_global.json')
 //d3.json('data/mt_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -192,7 +192,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_private.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_quantis_private.json')
 //d3.json('data/mt_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -202,7 +202,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_public.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_quantis_public.json')
 //d3.json('data/mt_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -212,7 +212,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_global.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_quantis_global.json')
 //d3.json('data/writing_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -222,7 +222,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_private.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_quantis_private.json')
 //d3.json('data/writing_aggregated_scores.json')
 .then(data => {
     render({ 
@@ -232,7 +232,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     })
 })
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_public.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_quantis_public.json')
 //d3.json('data/writing_aggregated_scores.json')
 .then(data => {
     render({ 
