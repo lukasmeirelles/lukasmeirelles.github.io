@@ -69,8 +69,10 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
 	chartGroup.append("g")
         .call(yAxisScore)
 
-    const circleRadius = 2
-    chartGroup.selectAll("rect").data(data)
+    const tooltipMessage = item => item
+
+    const circleRadius = 5
+    chartGroup.selectAll("rect").data(data.filter(d => d.school === 'private' && d.test === 'ch'))
         .enter()
             .append("circle")
                 .attr('cx', d => xAxisScale(xValue(d)))
@@ -81,6 +83,19 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
                         return `${item.Region.toLowerCase()}_region`
                     }
                     return 'brazil'
+                })
+                .on('mouseover', item => {
+                    let message = item.State
+                    if (item.State !== 'Brasil') {
+                        message += " (" + item.Region + ")"
+                    }
+                    message += "\n" + item.Median
+
+                    d3.select('#tooltip')
+                        .style('left', d3.event.pageX + 'px')
+                        .style('top', d3.event.pageY + 'px')
+                        .style('opacity', 1)
+                        .text(message);
                 })
 
 }
