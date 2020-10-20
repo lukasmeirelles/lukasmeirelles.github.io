@@ -53,3 +53,17 @@ rect {
 path.domain {
 	stroke-width: 0;
 }
+
+.public {
+	stroke-width: 1;
+	stroke: black;
+}
+
+.private {
+	stroke-width: 1;
+	stroke: blue;
+}
+
+rect.global {
+	opacity: 0.5;
+}

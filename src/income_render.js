@@ -97,6 +97,9 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
                         .style('opacity', 1)
                         .text(message);
                 })
+                .on('mouseout', () => {
+                    d3.select('#tooltip').style('opacity', 0)
+                })
 
 }
 

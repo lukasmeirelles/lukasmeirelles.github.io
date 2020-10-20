@@ -1,4 +1,4 @@
-const render = ({data, htmlComponent, chartTitle}) => {
+const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
 	const margin = {
 		top: 40,
 		bottom: 50,
@@ -54,191 +54,96 @@ const render = ({data, htmlComponent, chartTitle}) => {
     	.attr("y2", yAxisScoreScale(brasilData.Mean))
     	.attr("stroke", "black")
 
-	chartGroup.selectAll("vertLines").data(data)
-    .enter()
-    	.append("line")
-    		.attr("x1", item => xAxisScale(stateName(item)) )
-    		.attr("x2", item => xAxisScale(stateName(item)) )
-    		.attr("y1", (item) => yAxisScoreScale(item.Min) )
-    		.attr("y2", (item) => yAxisScoreScale(item.Max) )
-    		.attr("stroke", "red")
-    		.style("width", 40)
+    const regionClass = (item) => {
+        if (item.Region) {
+            return `${item.Region.toLowerCase()}_region`
+        }
+        return 'brazil'
+    }
 
-    const boxWidth = 35
+    const drawBoxPlot = (data, chartGroup) => {
+        const getSchoolOffset = (item) => {
+            if (item.school === 'private') {
+                return 7.5;
+            }
+            if (item.school === 'public') {
+                return -7.5;
+            }
+            return 0;
+        }
 
-	chartGroup.selectAll("boxes").data(data)
-    .enter()
-    	.append("rect")
-    		.attr("x", function(d){return(xAxisScale(stateName(d))-boxWidth/2)})
-    		.attr("y", function(d){return(yAxisScoreScale(d.Perc75))})
-    		.attr("height", function(d){return(yAxisScoreScale(d.Perc25)-yAxisScoreScale(d.Perc75))})
-    		.attr("width", boxWidth )
-    		.attr("stroke", "black")
-    		.attr("class", item => {
-    			if (item.Region) {
-    				return `${item.Region.toLowerCase()}_region`
-    			}
-    			return 'brazil'
-    		})
 
-	chartGroup.selectAll("medianLines").data(data)
-    .enter()
-    	.append("line")
-    		.attr("x1", function(d){return(xAxisScale(stateName(d))-boxWidth/2) })
-    		.attr("x2", function(d){return(xAxisScale(stateName(d))+boxWidth/2) })
-    		.attr("y1", function(d){return(yAxisScoreScale(d.Median))})
-    		.attr("y2", function(d){return(yAxisScoreScale(d.Median))})
-    		.attr("stroke", "black")
-    		.style("width", 80)
+        chartGroup.selectAll("vertLines").data(data)
+        .enter()
+            .append("line")
+                .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
+                .attr("x2", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
+                .attr("y1", (item) => yAxisScoreScale(item.Min) )
+                .attr("y2", (item) => yAxisScoreScale(item.Max) )
+                .attr("stroke", "red")
+                .style("width", 40)
+        
+        const boxWidth = (item) => {
+            if (item.school === 'global') {
+                return 35;
+            }
+            return 10;
+        }
+
+        const tooltipMessage = (item) => {
+            let message = item.State
+            if (item.State !== 'Brasil') {
+                message += " (" + item.Region + ")"
+            }
+            message += "<br>Mínima: " + item.Min
+            message += "<br>Percentil 25: " + item.Perc25
+            message += "<br>Média: " + item.Mean
+            message += "<br>Mediana: " + item.Median
+            message += "<br>Percentil 75: " + item.Perc75
+            message += "<br>Máxima: " + item.Max
+            return message
+        }
+
+        chartGroup.selectAll("boxes").data(data)
+        .enter()
+            .append("rect")
+                .attr("x", item => xAxisScale(stateName(item)) + getSchoolOffset(item)-boxWidth(item)/2)
+                .attr("y", item => yAxisScoreScale(item.Perc75))
+                .attr("height", item => yAxisScoreScale(item.Perc25)-yAxisScoreScale(item.Perc75))
+                .attr("width", item => boxWidth(item) )
+                .attr("stroke", "black")
+                .attr("class", item => regionClass(item) + ` ${item.school}`)
+                .on('mouseover', item => {
+                    d3.select('#tooltip')
+                        .style('left', d3.event.pageX + 'px')
+                        .style('top', d3.event.pageY + 'px')
+                        .style('opacity', 1)
+                        .html(tooltipMessage(item));
+                })
+                .on('mouseout', () => {
+                    d3.select('#tooltip').style('opacity', 0)
+                })
+
+        chartGroup.selectAll("medianLines").data(data)
+        .enter()
+            .append("line")
+                .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item)-boxWidth(item)/2)
+                .attr("x2", item => xAxisScale(stateName(item)) + getSchoolOffset(item)+boxWidth(item)/2)
+                .attr("y1", item => yAxisScoreScale(item.Median))
+                .attr("y2", item => yAxisScoreScale(item.Median))
+                .attr("stroke", "black")
+                .style("width", 80)   
+    }
+
+    drawBoxPlot(data.filter(i => i.test === 'ch'), chartGroup)
+
 }
 
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_quantis_global.json')
-//d3.json('data/ch_aggregated_scores.json')
+d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/scores_per_state.json')
 .then(data => {
-    render({ 
+    renderBoxPlots({ 
         data: data, 
-        htmlComponent: '#ch_score',
-        chartTitle: 'Performance na prova de Ciências Humanas em 2019 nos estados brasileiros'
+        htmlComponent: '#score_per_state',
+        chartTitle: 'Scores per State'
     })
 })
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_quantis_private.json')
-//d3.json('data/ch_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#ch_score_private',
-        chartTitle: 'Escolas privadas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/ch_scores_quantis_public.json')
-//d3.json('data/ch_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#ch_score_public',
-        chartTitle: 'Escolas públicas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_quantis_global.json')
-//d3.json('data/cn_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#cn_score',
-        chartTitle: 'Performance na prova de Ciências da Natureza em 2019 nos estados brasileiros'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_quantis_private.json')
-//d3.json('data/cn_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#cn_score_private',
-        chartTitle: 'Escolas privadas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/cn_scores_quantis_public.json')
-//d3.json('data/cn_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#cn_score_public',
-        chartTitle: 'Escolas públicas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_quantis_global.json')
-//d3.json('data/lc_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#lc_score',
-        chartTitle: 'Performance na prova de Linguagens e Códigos em 2019 nos estados brasileiros'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_quantis_private.json')
-//d3.json('data/lc_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#lc_score_private',
-        chartTitle: 'Escolas privadas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/lc_scores_quantis_public.json')
-//d3.json('data/lc_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#lc_score_public',
-        chartTitle: 'Escolas públicas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_quantis_global.json')
-//d3.json('data/mt_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#mt_score',
-        chartTitle: 'Performance na prova de Matemática em 2019 nos estados brasileiros'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_quantis_private.json')
-//d3.json('data/mt_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#mt_score_private',
-        chartTitle: 'Escolas privadas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/mt_scores_quantis_public.json')
-//d3.json('data/mt_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#mt_score_public',
-        chartTitle: 'Escolas públicas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_quantis_global.json')
-//d3.json('data/writing_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#writing_score',
-        chartTitle: 'Performance na redação em 2019 nos estados brasileiros'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_quantis_private.json')
-//d3.json('data/writing_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#writing_score_private',
-        chartTitle: 'Escolas privadas'
-    })
-})
-
-d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/writing_scores_quantis_public.json')
-//d3.json('data/writing_aggregated_scores.json')
-.then(data => {
-    render({ 
-        data: data, 
-        htmlComponent: '#writing_score_public',
-        chartTitle: 'Escolas públicas'
-    })
-})
-
