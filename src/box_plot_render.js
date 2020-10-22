@@ -2,7 +2,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
 	const margin = {
 		top: 40,
 		bottom: 50,
-		right: 40,
+		right: 0,
 		left: 50
 	}
 	const width = 1280 - margin.left - margin.right
@@ -80,8 +80,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .attr("x2", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
                 .attr("y1", (item) => yAxisScoreScale(item.Min) )
                 .attr("y2", (item) => yAxisScoreScale(item.Max) )
-                .attr("stroke", "red")
-                .style("width", 40)
+                .attr("class", "boxplotQuantile")
         
         const boxWidth = (item) => {
             if (item.school === 'global') {
@@ -135,7 +134,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .style("width", 80)   
     }
 
-    drawBoxPlot(data.filter(i => i.test === 'ch'), chartGroup)
+    drawBoxPlot(data.filter(i => i.test === 'writing'), chartGroup)
 
 }
 

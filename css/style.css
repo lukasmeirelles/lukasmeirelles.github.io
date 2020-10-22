@@ -67,3 +67,17 @@ path.domain {
 rect.global {
 	opacity: 0.5;
 }
+
+.boxplotQuantile {
+	stroke: red;
+	width: 40;
+}
+
+body {
+	background-color: #C9C6C4;
+}
+
+#tooltip {
+	opacity: 0;
+	visibility: none;
+}

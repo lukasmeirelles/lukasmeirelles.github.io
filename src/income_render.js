@@ -72,7 +72,7 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
     const tooltipMessage = item => item
 
     const circleRadius = 5
-    chartGroup.selectAll("rect").data(data.filter(d => d.school === 'private' && d.test === 'ch'))
+    chartGroup.selectAll("rect").data(data.filter(d => d.school === 'public' && d.test === 'ch'))
         .enter()
             .append("circle")
                 .attr('cx', d => xAxisScale(xValue(d)))
