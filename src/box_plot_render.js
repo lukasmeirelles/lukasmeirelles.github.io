@@ -26,7 +26,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
         .attr('transform', 'translate(0, 13)')
 
 	const xAxisScale = d3.scaleBand()
-		.range([ 0, width ])
+		.range([ 10, width ])
 		.domain(data.map( stateName ))
 		.paddingInner(1)
 		.paddingOuter(.5)
@@ -44,15 +44,6 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
 
 	chartGroup.append("g")
         .call(yAxisScore)
-
-    const brasilData = data.filter(item => item.State === 'Brasil')[0]
-    const lastState = data[data.length-1]
-    chartGroup.append("line")
-    	.attr("x1", 0)
-    	.attr("x2", xAxisScale(stateName(lastState)))
-    	.attr("y1", yAxisScoreScale(brasilData.Mean))
-    	.attr("y2", yAxisScoreScale(brasilData.Mean))
-    	.attr("stroke", "black")
 
     const regionClass = (item) => {
         if (item.Region) {
@@ -72,16 +63,6 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
             return 0;
         }
 
-
-        chartGroup.selectAll("vertLines").data(data)
-        .enter()
-            .append("line")
-                .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
-                .attr("x2", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
-                .attr("y1", (item) => yAxisScoreScale(item.Min) )
-                .attr("y2", (item) => yAxisScoreScale(item.Max) )
-                .attr("class", "boxplotQuantile")
-        
         const boxWidth = (item) => {
             if (item.school === 'global') {
                 return 35;
@@ -102,16 +83,38 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
             message += "<br>Máxima: " + item.Max
             return message
         }
+        
+        const brasilData = data.filter(item => item.State === 'Brasil')[0]
+        const lastState = data[data.length-1]
+        chartGroup.append("line")
+            .attr("x1", 0)
+            .attr("x2", xAxisScale(stateName(lastState)) + +boxWidth({school: "global"})/2)
+            .attr("y1", yAxisScoreScale(brasilData.Mean))
+            .attr("y2", yAxisScoreScale(brasilData.Mean))
+            .attr("stroke", "black")
 
-        chartGroup.selectAll("boxes").data(data)
-        .enter()
-            .append("rect")
+        const boxplotGroup = chartGroup.selectAll("boxplots").data(data).enter().append("g")
+
+        boxplotGroup.append("line")
+                .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
+                .attr("x2", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
+                .attr("y1", (item) => yAxisScoreScale(item.Perc75) )
+                .attr("y2", (item) => yAxisScoreScale(item.Max) )
+                .attr("class", "boxplotQuantile")
+
+        boxplotGroup.append("line")
+                .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
+                .attr("x2", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
+                .attr("y1", (item) => yAxisScoreScale(item.Min) )
+                .attr("y2", (item) => yAxisScoreScale(item.Perc25) )
+                .attr("class", "boxplotQuantile")
+
+        boxplotGroup.append("rect")
                 .attr("x", item => xAxisScale(stateName(item)) + getSchoolOffset(item)-boxWidth(item)/2)
                 .attr("y", item => yAxisScoreScale(item.Perc75))
                 .attr("height", item => yAxisScoreScale(item.Perc25)-yAxisScoreScale(item.Perc75))
                 .attr("width", item => boxWidth(item) )
-                .attr("stroke", "black")
-                .attr("class", item => regionClass(item) + ` ${item.school}`)
+                .attr("class", item => `boxplot-rect ${regionClass(item)} ${item.school}`)
                 .on('mouseover', item => {
                     d3.select('#tooltip')
                         .style('left', d3.event.pageX + 'px')
@@ -123,18 +126,16 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                     d3.select('#tooltip').style('opacity', 0)
                 })
 
-        chartGroup.selectAll("medianLines").data(data)
-        .enter()
-            .append("line")
+        boxplotGroup.append("line")
                 .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item)-boxWidth(item)/2)
                 .attr("x2", item => xAxisScale(stateName(item)) + getSchoolOffset(item)+boxWidth(item)/2)
                 .attr("y1", item => yAxisScoreScale(item.Median))
                 .attr("y2", item => yAxisScoreScale(item.Median))
-                .attr("stroke", "black")
-                .style("width", 80)   
+                .attr("class", "boxplot-medianLine")
+
     }
 
-    drawBoxPlot(data.filter(i => i.test === 'writing'), chartGroup)
+    drawBoxPlot(data.filter(i => i.test === 'mt'), chartGroup)
 
 }
 

@@ -1,25 +1,25 @@
-.s_region {
-	fill: blue;
+rect.s_region {
+	fill: #95b074;
 }
 
-.se_region {
-	fill: yellow;
+rect.se_region {
+	fill: #bd8c2b;
 }
 
-.n_region {
-	fill: pink;
+rect.n_region {
+	fill: #7e819c;
 }
 
-.ne_region {
-	fill: red;
+rect.ne_region {
+	fill: #6bb6d1;
 }
 
-.co_region {
-	fill: green;
+rect.co_region {
+	fill: #44c944;
 }
 
-.brazil {
-	fill: brown;
+rect.brazil {
+	fill: #b33d3d;
 }
 
 .chartTitle {
@@ -54,30 +54,69 @@ path.domain {
 	stroke-width: 0;
 }
 
-.public {
-	stroke-width: 1;
+rect.public {
+	stroke-width: 0.5;
 	stroke: black;
 }
 
-.private {
-	stroke-width: 1;
-	stroke: blue;
+rect.private {
+	stroke-width: 0.5;
+	stroke: black;
 }
 
 rect.global {
-	opacity: 0.5;
+	opacity: 0.6;
 }
 
 .boxplotQuantile {
-	stroke: red;
-	width: 40;
+	stroke: #969393;
+	stroke-width: 1;
 }
 
 body {
-	background-color: #C9C6C4;
+	background-color: #dbd9d7;
 }
 
 #tooltip {
 	opacity: 0;
 	visibility: none;
+}
+
+.boxplot-medianLine {
+	stroke: black;
+	stroke-width: 0.5;
+}
+
+.boxplot-rect {
+	stroke: black;
+}
+
+circle {
+	opacity: 0.7;
+	fill: none;
+	stroke-width: 3;
+}
+
+circle.s_region {
+	stroke: #95b074;
+}
+
+circle.se_region {
+	stroke: #bd8c2b;
+}
+
+circle.n_region {
+	stroke: #7e819c;
+}
+
+circle.ne_region {
+	stroke: #6bb6d1;
+}
+
+circle.co_region {
+	stroke: #44c944;
+}
+
+circle.brazil {
+	stroke: #b33d3d;
 }

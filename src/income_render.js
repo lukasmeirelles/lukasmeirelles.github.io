@@ -47,7 +47,7 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
     const xValue = data => data.Median
 	const xAxisScale = d3.scaleLinear()
 		.range([ 0, width ])
-		.domain([ 400, 1000 ])
+		.domain([ 400, 950 ])
 
 	chartGroup.append("g")
 		.attr("transform", "translate(0," + height + ")")
@@ -70,20 +70,22 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
         .call(yAxisScore)
 
     const tooltipMessage = item => item
+    
+    const regionClass = (item) => {
+        if (item.Region) {
+            return `${item.Region.toLowerCase()}_region`
+        }
+        return 'brazil'
+    }
 
     const circleRadius = 5
-    chartGroup.selectAll("rect").data(data.filter(d => d.school === 'public' && d.test === 'ch'))
+    chartGroup.selectAll("circle").data(data)
         .enter()
             .append("circle")
                 .attr('cx', d => xAxisScale(xValue(d)))
                 .attr('r', circleRadius)
                 .attr('cy', d => yAxisScale(yValue(d.income)))
-                .attr("class", item => {
-                    if (item.Region) {
-                        return `${item.Region.toLowerCase()}_region`
-                    }
-                    return 'brazil'
-                })
+                .attr("class", regionClass)
                 .on('mouseover', item => {
                     let message = item.State
                     if (item.State !== 'Brasil') {
@@ -104,7 +106,6 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
 }
 
 d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/scores_per_income_type.json')
-//d3.json('data/ch_aggregated_scores.json')
 .then(data => {
     renderIncomeCharts({ 
         data: data, 
