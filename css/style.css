@@ -75,6 +75,7 @@ rect.global {
 
 body {
 	background-color: #dbd9d7;
+	font-family: sans-serif;
 }
 
 #tooltip {
@@ -123,4 +124,8 @@ circle.co_region {
 
 circle.brazil {
 	stroke: #b33d3d;
+}
+
+.legend {
+	font-size: 0.8em;
 }

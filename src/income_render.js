@@ -1,12 +1,101 @@
+const overall_school_income_checkbox = "#income_overall"
+const public_school_income_checkbox = "#income_public"
+const private_school_income_checkbox = "#income_private"
+const test_income_select = "#income_test"
+
+const circleRadius = 5
+
+const setUpIncomeLegends = (svgComponent) => {
+    const legendXOffset = 970
+
+    svgComponent.append("text")
+        .attr("x", legendXOffset - circleRadius)
+        .attr("y", 70 + circleRadius)
+        .attr("class", "legend")
+        .text("Legendas:")
+
+    const brazilLegendYOffset = 100
+    svgComponent.append("circle")
+        .attr("cx", legendXOffset)
+        .attr("cy", brazilLegendYOffset)
+        .attr("r", circleRadius)
+        .attr("class", "brazil")
+    svgComponent.append("text")
+        .attr("x", legendXOffset + 10)
+        .attr("y", brazilLegendYOffset + circleRadius)
+        .attr("class", "legend")
+        .text("Brasil")
+
+    const coLegendYOffset = 130
+    svgComponent.append("circle")
+        .attr("cx", legendXOffset)
+        .attr("cy", coLegendYOffset)
+        .attr("r", circleRadius)
+        .attr("class", "co_region")
+    svgComponent.append("text")
+        .attr("x", legendXOffset + 10)
+        .attr("y", coLegendYOffset + circleRadius)
+        .attr("class", "legend")
+        .text("Centro-Oeste")
+
+    const neLegendYOffset = 160
+    svgComponent.append("circle")
+        .attr("cx", legendXOffset)
+        .attr("cy", neLegendYOffset)
+        .attr("r", circleRadius)
+        .attr("class", "ne_region")
+    svgComponent.append("text")
+        .attr("x", legendXOffset + 10)
+        .attr("y", neLegendYOffset + circleRadius)
+        .attr("class", "legend")
+        .text("Nordeste")
+
+    const nLegendYOffset = 190
+    svgComponent.append("circle")
+        .attr("cx", legendXOffset)
+        .attr("cy", nLegendYOffset)
+        .attr("r", circleRadius)
+        .attr("class", "n_region")
+    svgComponent.append("text")
+        .attr("x", legendXOffset + 10)
+        .attr("y", nLegendYOffset + circleRadius)
+        .attr("class", "legend")
+        .text("Norte")
+
+    const seLegendYOffset = 220
+    svgComponent.append("circle")
+        .attr("cx", legendXOffset)
+        .attr("cy", seLegendYOffset)
+        .attr("r", circleRadius)
+        .attr("class", "se_region")
+    svgComponent.append("text")
+        .attr("x", legendXOffset + 10)
+        .attr("y", seLegendYOffset + circleRadius)
+        .attr("class", "legend")
+        .text("Sudeste")
+
+    const sLegendYOffset = 250
+    svgComponent.append("circle")
+        .attr("cx", legendXOffset)
+        .attr("cy", sLegendYOffset)
+        .attr("r", circleRadius)
+        .attr("class", "s_region")
+    svgComponent.append("text")
+        .attr("x", legendXOffset + 10)
+        .attr("y", sLegendYOffset + circleRadius)
+        .attr("class", "legend")
+        .text("Sul")
+}
+
 const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
 	const margin = {
 		top: 40,
-		bottom: 50,
-		right: 40,
+		bottom: 75,
+		right: 140,
 		left: 200
 	}
 	const width = 1280 - margin.left - margin.right
-	const height = 600 - margin.top - margin.bottom
+	const height = 625 - margin.top - margin.bottom
 
     const incomes = {}
     incomes["A"] = "Nenhuma renda"
@@ -41,8 +130,11 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
         .attr('class', 'chartTitle')
         .text(chartTitle)
 
+    const legendGroup = svg.append('g')
+    setUpIncomeLegends(legendGroup)
+
     const chartGroup = svg.append('g')
-        .attr('transform', 'translate(0, 25)')
+        .attr('transform', 'translate(0, 50)')
 
     const xValue = data => data.Median
 	const xAxisScale = d3.scaleLinear()
@@ -74,7 +166,7 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
     const public_school = "public"
     const private_school = "private"
     let selectedSchools = [ overall_school ]
-    document.querySelector("#income_overall").addEventListener('change', (event) => {
+    document.querySelector(overall_school_income_checkbox).addEventListener('change', (event) => {
         if (event.target.checked) {
             selectedSchools.push(overall_school)
         } else {
@@ -83,7 +175,7 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
 
         renderIncomeChart()
     })
-    document.querySelector("#income_public").addEventListener('change', (event) => {
+    document.querySelector(public_school_income_checkbox).addEventListener('change', (event) => {
         if (event.target.checked) {
             selectedSchools.push(public_school)
         } else {
@@ -92,7 +184,7 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
 
         renderIncomeChart()
     })
-    document.querySelector("#income_private").addEventListener('change', (event) => {
+    document.querySelector(private_school_income_checkbox).addEventListener('change', (event) => {
         if (event.target.checked) {
             selectedSchools.push(private_school)
         } else {
@@ -103,7 +195,7 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
     })
 
     let selectedTest = "ch"
-    document.querySelector("#income_test").addEventListener('change', (event) => {
+    document.querySelector(test_income_select).addEventListener('change', (event) => {
         selectedTest = event.target.value
         renderIncomeChart()
     })
@@ -118,8 +210,8 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
             return 'brazil'
         }
 
-        const circleRadius = 5
-        charJoin = chartGroup.selectAll("circle").data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school)), item => item.id)
+        charJoin = chartGroup.selectAll("circle")
+            .data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school)), item => item.id)
         charJoin.enter()
                 .append("circle")
                     .attr('cx', d => xAxisScale(xValue(d)))
@@ -157,6 +249,12 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
 d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/scores_per_income_type.json')
 .then(data => {
     data.forEach(d => d.id = Math.random())
+
+    document.querySelector(overall_school_income_checkbox).checked = true
+    document.querySelector(public_school_income_checkbox).checked = false
+    document.querySelector(private_school_income_checkbox).checked = false
+    document.querySelector(test_income_select).value = "ch"
+    
     renderIncomeCharts({ 
         data: data, 
         htmlComponent: '#score_per_income',
