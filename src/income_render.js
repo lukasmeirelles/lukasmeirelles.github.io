@@ -69,47 +69,97 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
 	chartGroup.append("g")
         .call(yAxisScore)
 
-    const tooltipMessage = item => item
-    
-    const regionClass = (item) => {
-        if (item.Region) {
-            return `${item.Region.toLowerCase()}_region`
+
+    const overall_school = "global"
+    const public_school = "public"
+    const private_school = "private"
+    let selectedSchools = [ overall_school ]
+    document.querySelector("#income_overall").addEventListener('change', (event) => {
+        if (event.target.checked) {
+            selectedSchools.push(overall_school)
+        } else {
+            selectedSchools = selectedSchools.filter(s => s !== overall_school)
         }
-        return 'brazil'
+
+        renderIncomeChart()
+    })
+    document.querySelector("#income_public").addEventListener('change', (event) => {
+        if (event.target.checked) {
+            selectedSchools.push(public_school)
+        } else {
+            selectedSchools = selectedSchools.filter(s => s !== public_school)
+        }
+
+        renderIncomeChart()
+    })
+    document.querySelector("#income_private").addEventListener('change', (event) => {
+        if (event.target.checked) {
+            selectedSchools.push(private_school)
+        } else {
+            selectedSchools = selectedSchools.filter(s => s !== private_school)
+        }
+
+        renderIncomeChart()
+    })
+
+    let selectedTest = "ch"
+    document.querySelector("#income_test").addEventListener('change', (event) => {
+        selectedTest = event.target.value
+        renderIncomeChart()
+    })
+
+    const renderIncomeChart = () => {
+        const tooltipMessage = item => item
+        
+        const regionClass = (item) => {
+            if (item.Region) {
+                return `${item.Region.toLowerCase()}_region`
+            }
+            return 'brazil'
+        }
+
+        const circleRadius = 5
+        charJoin = chartGroup.selectAll("circle").data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school)), item => item.id)
+        charJoin.enter()
+                .append("circle")
+                    .attr('cx', d => xAxisScale(xValue(d)))
+                    .attr('cy', d => yAxisScale(yValue(d.income)))
+                    .attr("class", regionClass)
+                    .on('mouseover', item => {
+                        let message = item.State
+                        if (item.State !== 'Brasil') {
+                            message += " (" + item.Region + ")"
+                        }
+                        message += "\n" + item.Median
+
+                        d3.select('#tooltip')
+                            .style('left', d3.event.pageX + 'px')
+                            .style('top', d3.event.pageY + 'px')
+                            .style('opacity', 1)
+                            .text(message);
+                    })
+                    .on('mouseout', () => {
+                        d3.select('#tooltip').style('opacity', 0)
+                    })
+                    .transition().duration(1000)
+                        .attr('r', circleRadius)
+
+        charJoin.exit()
+            .transition()
+                .attr('r', 0)
+            .remove()
     }
-
-    const circleRadius = 5
-    chartGroup.selectAll("circle").data(data)
-        .enter()
-            .append("circle")
-                .attr('cx', d => xAxisScale(xValue(d)))
-                .attr('r', circleRadius)
-                .attr('cy', d => yAxisScale(yValue(d.income)))
-                .attr("class", regionClass)
-                .on('mouseover', item => {
-                    let message = item.State
-                    if (item.State !== 'Brasil') {
-                        message += " (" + item.Region + ")"
-                    }
-                    message += "\n" + item.Median
-
-                    d3.select('#tooltip')
-                        .style('left', d3.event.pageX + 'px')
-                        .style('top', d3.event.pageY + 'px')
-                        .style('opacity', 1)
-                        .text(message);
-                })
-                .on('mouseout', () => {
-                    d3.select('#tooltip').style('opacity', 0)
-                })
+    
+    renderIncomeChart()
 
 }
 
 d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/scores_per_income_type.json')
 .then(data => {
+    data.forEach(d => d.id = Math.random())
     renderIncomeCharts({ 
         data: data, 
-        htmlComponent: '#ch_score_per_income',
-        chartTitle: 'Notas por renda'
+        htmlComponent: '#score_per_income',
+        chartTitle: 'Mediana das notas no ENEM por faixas de renda'
     })
 })

@@ -52,7 +52,47 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
         return 'brazil'
     }
 
-    const drawBoxPlot = (data, chartGroup) => {
+
+    const overall_school = "global"
+    const public_school = "public"
+    const private_school = "private"
+    let selectedSchools = [ overall_school ]
+    document.querySelector("#score_per_state_overall").addEventListener('change', (event) => {
+        if (event.target.checked) {
+            selectedSchools.push(overall_school)
+        } else {
+            selectedSchools = selectedSchools.filter(s => s !== overall_school)
+        }
+
+        drawBoxPlot()
+    })
+    document.querySelector("#score_per_state_public").addEventListener('change', (event) => {
+        if (event.target.checked) {
+            selectedSchools.push(public_school)
+        } else {
+            selectedSchools = selectedSchools.filter(s => s !== public_school)
+        }
+
+        drawBoxPlot()
+    })
+    document.querySelector("#score_per_state_private").addEventListener('change', (event) => {
+        if (event.target.checked) {
+            selectedSchools.push(private_school)
+        } else {
+            selectedSchools = selectedSchools.filter(s => s !== private_school)
+        }
+
+        drawBoxPlot()
+    })
+
+    let selectedTest = "ch"
+    document.querySelector("#score_per_state_test").addEventListener('change', (event) => {
+        selectedTest = event.target.value
+        drawBoxPlot()
+    })
+
+
+    const drawBoxPlot = () => {
         const getSchoolOffset = (item) => {
             if (item.school === 'private') {
                 return 7.5;
@@ -84,16 +124,25 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
             return message
         }
         
-        const brasilData = data.filter(item => item.State === 'Brasil')[0]
         const lastState = data[data.length-1]
-        chartGroup.append("line")
-            .attr("x1", 0)
-            .attr("x2", xAxisScale(stateName(lastState)) + +boxWidth({school: "global"})/2)
-            .attr("y1", yAxisScoreScale(brasilData.Mean))
-            .attr("y2", yAxisScoreScale(brasilData.Mean))
-            .attr("stroke", "black")
+        const meanLineJoin = chartGroup.selectAll(".meanLine")
+            .data(data.filter(item => item.State === 'Brasil' && item.school === 'global' && item.test === selectedTest), item => item.id)
+        meanLineJoin
+            .enter()
+                .append("line")
+                    .attr("x1", 0)
+                    .attr("x2", xAxisScale(stateName(lastState)) + +boxWidth({school: "global"})/2)
+                    .attr("y1", item => yAxisScoreScale(item.Mean))
+                    .attr("y2", item => yAxisScoreScale(item.Mean))
+                    .attr("class", "meanLine")
 
-        const boxplotGroup = chartGroup.selectAll("boxplots").data(data).enter().append("g")
+        meanLineJoin.exit().remove()
+
+        const dataJoin = chartGroup.selectAll(".boxplots").data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school)), item => item.id)
+        const boxplotGroup = dataJoin
+            .enter()
+                .append("g")
+                    .attr("class", "boxplots")
 
         boxplotGroup.append("line")
                 .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
@@ -133,17 +182,19 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .attr("y2", item => yAxisScoreScale(item.Median))
                 .attr("class", "boxplot-medianLine")
 
+        dataJoin.exit().remove()
     }
 
-    drawBoxPlot(data.filter(i => i.test === 'mt'), chartGroup)
+    drawBoxPlot()
 
 }
 
 d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.io/master/data/scores_per_state.json')
 .then(data => {
+    data.forEach(d => d.id = Math.random())
     renderBoxPlots({ 
         data: data, 
         htmlComponent: '#score_per_state',
-        chartTitle: 'Scores per State'
+        chartTitle: 'Performance no ENEM por Estados'
     })
 })

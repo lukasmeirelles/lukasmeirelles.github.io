@@ -91,6 +91,10 @@ body {
 	stroke: black;
 }
 
+.meanLine {
+	stroke: black;
+}
+
 circle {
 	opacity: 0.7;
 	fill: none;
