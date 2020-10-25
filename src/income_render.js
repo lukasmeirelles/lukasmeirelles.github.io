@@ -90,6 +90,18 @@ const setUpIncomeLegends = (svgComponent) => {
         .text("Sul")
 }
 
+const tooltipMessageForIncomeChart = (item) => {
+    let message = translateState(item.State)
+    if (item.State !== 'Brasil') {
+        message += " (" + translateRegion(item.Region) + ")"
+    }
+    if (item.school !== "global") {
+        message += "<br>" + translateSchool(item.school)
+    }
+    message += "<hr/>Mediana: " + normalizeGrade(item.Median)
+    return message
+}
+
 const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
 	const margin = {
 		top: 40,
@@ -218,17 +230,6 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
             return 'brazil'
         }
 
-        const tooltipMessageForIncomeChart = (item) => {
-            let message = translateState(item.State)
-            if (item.State !== 'Brasil') {
-                message += " (" + translateRegion(item.Region) + ")"
-            }
-            if (item.school !== "global") {
-                message += "<br>" + translateSchool(item.school)
-            }
-            message += "<br>Mediana: " + normalizeGrade(item.Median)
-            return message
-        }
 
         charJoin = chartGroup.selectAll("circle")
             .data(data.filter(r => r.State !== "Brasil" && r.test === selectedTest && selectedSchools.includes(r.school) && (!selectedRegion || !r.Region || r.Region.toLowerCase() === selectedRegion)), item => item.id)
