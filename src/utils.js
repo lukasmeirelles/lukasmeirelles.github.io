@@ -55,7 +55,7 @@ const translateState = (state) => {
 		case "sp":
 			return "São Paulo"
 		case "to":
-			return "Tocantis"
+			return "Tocantins"
 		default:
 			return state
 	}
