@@ -135,3 +135,15 @@ circle.brazil {
 	stroke: #b33d3d;
 	fill: none;
 }
+
+.boxplotTooltip {
+	width: 100%;
+}
+
+.boxplotTooltip td.value {
+	text-align: right;
+}
+
+.boxplotTooltip td.label {
+	text-align: left;
+}

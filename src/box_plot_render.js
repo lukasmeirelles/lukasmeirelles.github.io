@@ -111,6 +111,14 @@ const setUpBoxplotLegends = (svgComponent) => {
 
 }
 
+const tooltipMessageForMeanLine = (item) => {
+    let message = translateState(item.State)
+    message += "<hr/><label>Média: </label>"
+    message += normalizeGrade(item.Mean)
+
+    return message
+}
+
 const tooltipMessageForBoxplots = (item) => {
     let message = translateState(item.State)
     if (item.State !== 'Brasil') {
@@ -119,13 +127,32 @@ const tooltipMessageForBoxplots = (item) => {
     if (item.school !== "global") {
         message += "<br>" + translateSchool(item.school)
     }
-    message += "<hr/>Mínima: " + normalizeGrade(item.Min)
-    message += "<br>Percentil 25: " + normalizeGrade(item.Perc25)
-    message += "<br>Média: " + normalizeGrade(item.Mean)
-    message += "<br>Mediana: " + normalizeGrade(item.Median)
-    message += "<br>Percentil 75: " + normalizeGrade(item.Perc75)
-    message += "<br>Máxima: " + normalizeGrade(item.Max)
+    message += "<hr/><table class=\"boxplotTooltip\">"
+    message += "<tr><td class=\"label\">Mínima:</td><td class=\"value\">" + normalizeGrade(item.Min) + "</td></tr>"
+    message += "<tr><td class=\"label\">Percentil 25:</td><td class=\"value\">" + normalizeGrade(item.Perc25) + "</td></tr>"
+    message += "<tr><td class=\"label\">Média:</td><td class=\"value\">" + normalizeGrade(item.Mean) + "</td></tr>"
+    message += "<tr><td class=\"label\">Mediana:</td><td class=\"value\">" + normalizeGrade(item.Median) + "</td></tr>"
+    message += "<tr><td class=\"label\">Percentil 75:</td><td class=\"value\">" + normalizeGrade(item.Perc75) + "</td></tr>"
+    message += "<tr><td class=\"label\">Máxima:</td><td class=\"value\">" + normalizeGrade(item.Max) + "</td></tr>"
+    message += "</table>"
     return message
+}
+
+const getSchoolOffset = (item) => {
+    if (item.school === 'private') {
+        return 7.5;
+    }
+    if (item.school === 'public') {
+        return -7.5;
+    }
+    return 0;
+}
+
+const boxWidth = (item) => {
+    if (item.school === 'global') {
+        return 35;
+    }
+    return 10;
 }
 
 const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
@@ -157,16 +184,6 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
 
     const chartGroup = svg.append('g')
         .attr('transform', 'translate(0, 13)')
-
-	const xAxisScale = d3.scaleBand()
-		.range([ 10, width ])
-		.domain(data.map( stateName ))
-		.paddingInner(1)
-		.paddingOuter(.5)
-
-	chartGroup.append("g")
-		.attr("transform", "translate(0," + height + ")")
-		.call(d3.axisBottom(xAxisScale))
 
 	const yAxisScoreScale = d3.scaleLinear()
 		.domain([0, 1000])
@@ -231,37 +248,31 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
 
 
     const drawBoxPlot = () => {
-        const getSchoolOffset = (item) => {
-            if (item.school === 'private') {
-                return 7.5;
-            }
-            if (item.school === 'public') {
-                return -7.5;
-            }
-            return 0;
-        }
+        const xAxisScale = d3.scaleBand()
+            .range([ 10, width ])
+            .domain(data.map( stateName ))
+            .paddingInner(1)
+            .paddingOuter(.5)
 
-        const boxWidth = (item) => {
-            if (item.school === 'global') {
-                return 35;
-            }
-            return 10;
-        }
+        chartGroup.selectAll(".boxplotXAxis").remove()
+        chartGroup.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .attr("class", "boxplotXAxis")
+            .call(d3.axisBottom(xAxisScale))
 
         
         const lastState = data[data.length-1]
         const meanLineJoin = chartGroup.selectAll(".meanLine")
             .data(data.filter(item => item.State === 'Brasil' && item.school === 'global' && item.test === selectedTest), item => item.id)
-        meanLineJoin
-            .enter()
-                .append("line")
-                    .attr("y1", item => yAxisScoreScale(item.Mean))
-                    .attr("y2", item => yAxisScoreScale(item.Mean))
-                    .attr("class", "meanLine")
-                    .transition().duration(2000)
-                        .attr("x1", 0)
-                        .attr("x2", xAxisScale(stateName(lastState)) + +boxWidth({school: "global"})/2)
-                    
+        
+        const meanLineElement = meanLineJoin.enter().append("line")
+        meanLineElement.attr("y1", item => yAxisScoreScale(item.Mean))
+            .attr("y2", item => yAxisScoreScale(item.Mean))
+            .attr("class", "meanLine")
+            .transition().duration(2000)
+                .attr("x1", 0)
+                .attr("x2", xAxisScale(stateName(lastState)) + +boxWidth({school: "global"})/2)
+        setUpTooltipEvents(meanLineElement, tooltipMessageForMeanLine)
 
         meanLineJoin.exit()
             .transition()
