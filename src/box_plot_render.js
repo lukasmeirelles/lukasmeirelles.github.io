@@ -3,6 +3,7 @@ const public_school_boxplot_checkbox = "#score_per_state_public"
 const private_school_boxplot_checkbox = "#score_per_state_private"
 const test_boxplot_select = "#score_per_state_test"
 const region_boxplot_select = "#score_per_state_region_filter"
+const boxplot_sort = "#score_per_state_sort"
 
 const setUpBoxplotLegends = (svgComponent) => {
     const legendXOffset = 1190
@@ -108,7 +109,6 @@ const setUpBoxplotLegends = (svgComponent) => {
         .attr("y", sLegendYOffset + legendSize - 2)
         .attr("class", "legend")
         .text("Sul")
-
 }
 
 const tooltipMessageForMeanLine = (item) => {
@@ -153,6 +153,19 @@ const boxWidth = (item) => {
         return 35;
     }
     return 10;
+}
+
+const boxplotSortDecoder = (sortId) => {
+    switch(sortId) {
+        case "region":
+            return (a, b) => a.Region ? a.Region.localeCompare(b.Region) : -1
+        case "median":
+            return (a, b) => a.Median - b.Median
+        case "spread":
+            return (a, b) => (a.Perc75 - a.Perc25) - (b.Perc75 - b.Perc25)
+        default:
+            return (a, b) => -1
+    }
 }
 
 const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
@@ -246,11 +259,21 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
         drawBoxPlot()
     })
 
+    let selectedSort = ""
+    document.querySelector(boxplot_sort).addEventListener('change', (event) => {
+        selectedSort = event.target.value === "state" ? "" : event.target.value
+        drawBoxPlot()
+    })
+
 
     const drawBoxPlot = () => {
+        const orderedStates = data.filter(item => item.school === 'global' && item.test === selectedTest)
+            .sort(boxplotSortDecoder(selectedSort))
+            .map( stateName )
+
         const xAxisScale = d3.scaleBand()
             .range([ 10, width ])
-            .domain(data.map( stateName ))
+            .domain(orderedStates)
             .paddingInner(1)
             .paddingOuter(.5)
 
@@ -260,8 +283,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
             .attr("class", "boxplotXAxis")
             .call(d3.axisBottom(xAxisScale))
 
-        
-        const lastState = data[data.length-1]
+
         const meanLineJoin = chartGroup.selectAll(".meanLine")
             .data(data.filter(item => item.State === 'Brasil' && item.school === 'global' && item.test === selectedTest), item => item.id)
         
@@ -271,7 +293,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
             .attr("class", "meanLine")
             .transition().duration(2000)
                 .attr("x1", 0)
-                .attr("x2", xAxisScale(stateName(lastState)) + +boxWidth({school: "global"})/2)
+                .attr("x2", xAxisScale(orderedStates[orderedStates.length-1]) + +boxWidth({school: "global"})/2)
         setUpTooltipEvents(meanLineElement, tooltipMessageForMeanLine)
 
         meanLineJoin.exit()
@@ -279,7 +301,10 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .attr("stroke-width", 0)
             .remove()
 
-        const dataJoin = chartGroup.selectAll(".boxplots")
+        chartGroup.selectAll(".dataGroup").remove()
+        const dataGroup = chartGroup.append("g").attr("class", "dataGroup")
+
+        const dataJoin = dataGroup.selectAll(".boxplots")
             .data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school) && (!selectedRegion || !r.Region || r.Region.toLowerCase() === selectedRegion)), item => item.id)
         const boxplotGroup = dataJoin
             .enter()
@@ -337,6 +362,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     document.querySelector(private_school_boxplot_checkbox).checked = false
     document.querySelector(test_boxplot_select).value = "ch"
     document.querySelector(region_boxplot_select).value = "all"
+    document.querySelector(boxplot_sort).value = "state"
     
     renderBoxPlots({ 
         data: data, 
