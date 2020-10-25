@@ -38,6 +38,24 @@
                 <option value="mt">Matemática</option>
                 <option value="writing">Redação</option>
             </select>
+            <br>
+            <label>Região: </label>
+            <select id="score_per_state_region_filter">
+                <option value="all">TODAS</option>
+                <option value="co">Centro-Oeste</option>
+                <option value="ne">Nordeste</option>
+                <option value="n">Norte</option>
+                <option value="se">Sudeste</option>
+                <option value="s">Sul</option>
+            </select>
+            <br>
+            <!--label>Ordenar por: </label>
+            <select id="score_per_state_sort">
+                <option value="state">Estado</option>
+                <option value="region">Região</option>
+                <option value="median">Mediana</option>
+                <option value="spread">Amplitude</option>
+            </select-->
         </div>
     </div>
 
@@ -55,12 +73,23 @@
                 <option value="mt">Matemática</option>
                 <option value="writing">Redação</option>
             </select>
+            <br>
+            <label>Região: </label>
+            <select id="income_region_filter">
+                <option value="all">TODAS</option>
+                <option value="co">Centro-Oeste</option>
+                <option value="ne">Nordeste</option>
+                <option value="n">Norte</option>
+                <option value="se">Sudeste</option>
+                <option value="s">Sul</option>
+            </select>
         </div>
     </div>
 
     <div id="tooltip"></div>
 
     <!--script src="src/score_render.js"></script-->
+    <script src="src/utils.js"></script>
     <script src="src/income_render.js"></script>
     <script src="src/box_plot_render.js"></script>
     

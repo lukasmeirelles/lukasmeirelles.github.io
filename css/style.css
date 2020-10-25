@@ -3,7 +3,7 @@ rect.s_region {
 }
 
 rect.se_region {
-	fill: #bd8c2b;
+	fill: #44c944;
 }
 
 rect.n_region {
@@ -15,7 +15,7 @@ rect.ne_region {
 }
 
 rect.co_region {
-	fill: #44c944;
+	fill: #bd8c2b;
 }
 
 rect.brazil {
@@ -93,7 +93,7 @@ body {
 }
 
 .meanLine {
-	stroke: black;
+	stroke: #b33d3d;
 }
 
 circle {
@@ -107,7 +107,7 @@ circle.s_region {
 }
 
 circle.se_region {
-	stroke: #bd8c2b;
+	stroke: #44c944;
 }
 
 circle.n_region {
@@ -119,7 +119,7 @@ circle.ne_region {
 }
 
 circle.co_region {
-	stroke: #44c944;
+	stroke: #bd8c2b;
 }
 
 circle.brazil {
@@ -128,4 +128,10 @@ circle.brazil {
 
 .legend {
 	font-size: 0.8em;
+	fill: #635F5D;
+}
+
+.income_reference {
+	stroke: #b33d3d;
+	fill: none;
 }

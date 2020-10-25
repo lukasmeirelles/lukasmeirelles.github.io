@@ -2,6 +2,7 @@ const overall_school_income_checkbox = "#income_overall"
 const public_school_income_checkbox = "#income_public"
 const private_school_income_checkbox = "#income_private"
 const test_income_select = "#income_test"
+const region_income_select = "#income_region_filter"
 
 const circleRadius = 5
 
@@ -15,11 +16,13 @@ const setUpIncomeLegends = (svgComponent) => {
         .text("Legendas:")
 
     const brazilLegendYOffset = 100
-    svgComponent.append("circle")
-        .attr("cx", legendXOffset)
-        .attr("cy", brazilLegendYOffset)
-        .attr("r", circleRadius)
-        .attr("class", "brazil")
+    svgComponent.append("line")
+        .attr("x1", legendXOffset-circleRadius)
+        .attr("x2", legendXOffset+circleRadius)
+        .attr("y1", brazilLegendYOffset)
+        .attr("y2", brazilLegendYOffset)
+        .attr("class", "income_reference")
+        .attr("stroke-width", 4)
     svgComponent.append("text")
         .attr("x", legendXOffset + 10)
         .attr("y", brazilLegendYOffset + circleRadius)
@@ -200,8 +203,13 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
         renderIncomeChart()
     })
 
+    let selectedRegion = ""
+    document.querySelector(region_income_select).addEventListener('change', (event) => {
+        selectedRegion = event.target.value === "all" ? "" : event.target.value
+        renderIncomeChart()
+    })
+
     const renderIncomeChart = () => {
-        const tooltipMessage = item => item
         
         const regionClass = (item) => {
             if (item.Region) {
@@ -210,36 +218,65 @@ const renderIncomeCharts = ({data, htmlComponent, chartTitle}) => {
             return 'brazil'
         }
 
+        const tooltipMessageForIncomeChart = (item) => {
+            let message = translateState(item.State)
+            if (item.State !== 'Brasil') {
+                message += " (" + translateRegion(item.Region) + ")"
+            }
+            if (item.school !== "global") {
+                message += "<br>" + translateSchool(item.school)
+            }
+            message += "<br>Mediana: " + normalizeGrade(item.Median)
+            return message
+        }
+
         charJoin = chartGroup.selectAll("circle")
-            .data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school)), item => item.id)
-        charJoin.enter()
+            .data(data.filter(r => r.State !== "Brasil" && r.test === selectedTest && selectedSchools.includes(r.school) && (!selectedRegion || !r.Region || r.Region.toLowerCase() === selectedRegion)), item => item.id)
+        const circles = charJoin.enter()
                 .append("circle")
                     .attr('cx', d => xAxisScale(xValue(d)))
                     .attr('cy', d => yAxisScale(yValue(d.income)))
                     .attr("class", regionClass)
-                    .on('mouseover', item => {
-                        let message = item.State
-                        if (item.State !== 'Brasil') {
-                            message += " (" + item.Region + ")"
-                        }
-                        message += "\n" + item.Median
 
-                        d3.select('#tooltip')
-                            .style('left', d3.event.pageX + 'px')
-                            .style('top', d3.event.pageY + 'px')
-                            .style('opacity', 1)
-                            .text(message);
-                    })
-                    .on('mouseout', () => {
-                        d3.select('#tooltip').style('opacity', 0)
-                    })
-                    .transition().duration(1000)
-                        .attr('r', circleRadius)
+        setUpTooltipEvents(circles, tooltipMessageForIncomeChart)
+
+        circles.transition().duration(1000)
+            .attr('r', circleRadius)
 
         charJoin.exit()
             .transition()
                 .attr('r', 0)
             .remove()
+
+
+        let groupedData = data.filter(r => r.State === "Brasil" && r.test === selectedTest && selectedSchools.includes(r.school))
+            .reduce((group, item) => { 
+                const items = group[item.school] || []
+                items.push(item)
+                group[item.school] = items.sort((a, b) => a.income.localeCompare(b.income))
+                return group
+            }, {})
+        let pathValues = Object.values(groupedData).map(items => {return {school: items[0].school, test: items[0].test, grades: items}})
+
+
+        const lineFunction = d3.line()
+                                .x(item => xAxisScale(xValue(item)))
+                                .y(item => yAxisScale(yValue(item.income)))
+
+        const pathWidth = 0.5
+        const referenceJoin = chartGroup.selectAll("path.income_reference").data(pathValues, item => item.school+item.test)
+        referenceJoin.enter()
+            .append("path")
+                .attr("d", item => lineFunction(item.grades))
+                .attr("class", "income_reference")
+                .transition().duration(1000)
+                    .attr("stroke-width", pathWidth)
+                        
+        referenceJoin.exit()
+            .transition()
+                .attr("stroke-width", 0)
+            .remove()
+
     }
     
     renderIncomeChart()
@@ -254,6 +291,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     document.querySelector(public_school_income_checkbox).checked = false
     document.querySelector(private_school_income_checkbox).checked = false
     document.querySelector(test_income_select).value = "ch"
+    document.querySelector(region_income_select).value = "all"
     
     renderIncomeCharts({ 
         data: data, 

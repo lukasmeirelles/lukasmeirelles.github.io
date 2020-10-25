@@ -2,18 +2,22 @@ const overall_school_boxplot_checkbox = "#score_per_state_overall"
 const public_school_boxplot_checkbox = "#score_per_state_public"
 const private_school_boxplot_checkbox = "#score_per_state_private"
 const test_boxplot_select = "#score_per_state_test"
+const region_boxplot_select = "#score_per_state_region_filter"
 
 const setUpBoxplotLegends = (svgComponent) => {
     const legendXOffset = 1190
+    const legendYOffset = 20
+    const defaulSpacing = 30
     const legendSize = 15
+
 
     svgComponent.append("text")
         .attr("x", legendXOffset)
-        .attr("y", 70 + legendSize)
+        .attr("y", legendYOffset + legendSize)
         .attr("class", "legend")
         .text("Legendas:")
 
-    const brazilLegendYOffset = 100
+    const brazilLegendYOffset = legendYOffset + defaulSpacing
     svgComponent.append("rect")
         .attr("x", legendXOffset)
         .attr("y", brazilLegendYOffset)
@@ -26,7 +30,21 @@ const setUpBoxplotLegends = (svgComponent) => {
         .attr("class", "legend")
         .text("Brasil")
 
-    const coLegendYOffset = 130
+    const meanLegendYOffset = brazilLegendYOffset + defaulSpacing
+    svgComponent.append("line")
+        .attr("x1", legendXOffset + 15)
+        .attr("x2", legendXOffset + legendSize + 15)
+        .attr("y1", meanLegendYOffset + legendSize/2)
+        .attr("y2", meanLegendYOffset + legendSize/2)
+        .attr("class", "meanLine")
+        .attr("stroke-width", 4)
+    svgComponent.append("text")
+        .attr("x", legendXOffset + legendSize + 20)
+        .attr("y", meanLegendYOffset + legendSize - 2)
+        .attr("class", "legend")
+        .text("Média")
+
+    const coLegendYOffset = meanLegendYOffset + defaulSpacing
     svgComponent.append("rect")
         .attr("x", legendXOffset)
         .attr("y", coLegendYOffset)
@@ -39,7 +57,7 @@ const setUpBoxplotLegends = (svgComponent) => {
         .attr("class", "legend")
         .text("Centro-Oeste")
 
-    const neLegendYOffset = 160
+    const neLegendYOffset = coLegendYOffset + defaulSpacing
     svgComponent.append("rect")
         .attr("x", legendXOffset)
         .attr("y", neLegendYOffset)
@@ -52,7 +70,7 @@ const setUpBoxplotLegends = (svgComponent) => {
         .attr("class", "legend")
         .text("Nordeste")
 
-    const nLegendYOffset = 190
+    const nLegendYOffset = neLegendYOffset + defaulSpacing
     svgComponent.append("rect")
         .attr("x", legendXOffset)
         .attr("y", nLegendYOffset)
@@ -65,7 +83,7 @@ const setUpBoxplotLegends = (svgComponent) => {
         .attr("class", "legend")
         .text("Norte")
 
-    const seLegendYOffset = 220
+    const seLegendYOffset = nLegendYOffset + defaulSpacing
     svgComponent.append("rect")
         .attr("x", legendXOffset)
         .attr("y", seLegendYOffset)
@@ -78,7 +96,7 @@ const setUpBoxplotLegends = (svgComponent) => {
         .attr("class", "legend")
         .text("Sudeste")
 
-    const sLegendYOffset = 250
+    const sLegendYOffset = seLegendYOffset + defaulSpacing
     svgComponent.append("rect")
         .attr("x", legendXOffset)
         .attr("y", sLegendYOffset)
@@ -90,33 +108,24 @@ const setUpBoxplotLegends = (svgComponent) => {
         .attr("y", sLegendYOffset + legendSize - 2)
         .attr("class", "legend")
         .text("Sul")
+
 }
 
-const tooltipMessage = (item) => {
-    let message = item.State
+const tooltipMessageForBoxplots = (item) => {
+    let message = translateState(item.State)
     if (item.State !== 'Brasil') {
-        message += " (" + item.Region + ")"
+        message += " (" + translateRegion(item.Region) + ")"
     }
-    message += "<br>Mínima: " + item.Min
-    message += "<br>Percentil 25: " + item.Perc25
-    message += "<br>Média: " + item.Mean
-    message += "<br>Mediana: " + item.Median
-    message += "<br>Percentil 75: " + item.Perc75
-    message += "<br>Máxima: " + item.Max
+    if (item.school !== "global") {
+        message += "<br>" + translateSchool(item.school)
+    }
+    message += "<hr/>Mínima: " + normalizeGrade(item.Min)
+    message += "<br>Percentil 25: " + normalizeGrade(item.Perc25)
+    message += "<br>Média: " + normalizeGrade(item.Mean)
+    message += "<br>Mediana: " + normalizeGrade(item.Median)
+    message += "<br>Percentil 75: " + normalizeGrade(item.Perc75)
+    message += "<br>Máxima: " + normalizeGrade(item.Max)
     return message
-}
-
-const setUpTooltipEvents = (svgComponent) => {
-    svgComponent.on('mouseover', item => {
-        d3.select('#tooltip')
-            .style('left', d3.event.pageX + 'px')
-            .style('top', d3.event.pageY + 'px')
-            .style('opacity', 1)
-            .html(tooltipMessage(item));
-    })
-    svgComponent.on('mouseout', () => {
-        d3.select('#tooltip').style('opacity', 0)
-    })
 }
 
 const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
@@ -214,6 +223,12 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
         drawBoxPlot()
     })
 
+    let selectedRegion = ""
+    document.querySelector(region_boxplot_select).addEventListener('change', (event) => {
+        selectedRegion = event.target.value === "all" ? "" : event.target.value
+        drawBoxPlot()
+    })
+
 
     const drawBoxPlot = () => {
         const getSchoolOffset = (item) => {
@@ -253,7 +268,8 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .attr("stroke-width", 0)
             .remove()
 
-        const dataJoin = chartGroup.selectAll(".boxplots").data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school)), item => item.id)
+        const dataJoin = chartGroup.selectAll(".boxplots")
+            .data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school) && (!selectedRegion || !r.Region || r.Region.toLowerCase() === selectedRegion)), item => item.id)
         const boxplotGroup = dataJoin
             .enter()
                 .append("g")
@@ -265,7 +281,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .attr("y1", (item) => yAxisScoreScale(item.Perc75) )
                 .attr("y2", (item) => yAxisScoreScale(item.Max) )
                 .attr("class", "boxplotQuantile")
-        setUpTooltipEvents(upperQuantile)
+        setUpTooltipEvents(upperQuantile, tooltipMessageForBoxplots)
 
         const bottomQuantile = boxplotGroup.append("line")
                 .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item) )
@@ -273,7 +289,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .attr("y1", (item) => yAxisScoreScale(item.Min) )
                 .attr("y2", (item) => yAxisScoreScale(item.Perc25) )
                 .attr("class", "boxplotQuantile")
-        setUpTooltipEvents(bottomQuantile)
+        setUpTooltipEvents(bottomQuantile, tooltipMessageForBoxplots)
 
         const boxplotQuantile = boxplotGroup.append("rect")
                 .attr("x", item => xAxisScale(stateName(item)) + getSchoolOffset(item)-boxWidth(item)/2)
@@ -281,7 +297,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .attr("height", item => yAxisScoreScale(item.Perc25)-yAxisScoreScale(item.Perc75))
                 .attr("width", item => boxWidth(item) )
                 .attr("class", item => `boxplot-rect ${regionClass(item)} ${item.school}`)
-        setUpTooltipEvents(boxplotQuantile)
+        setUpTooltipEvents(boxplotQuantile, tooltipMessageForBoxplots)
 
         const boxplotMedianLine = boxplotGroup.append("line")
                 .attr("x1", item => xAxisScale(stateName(item)) + getSchoolOffset(item)-boxWidth(item)/2)
@@ -289,7 +305,7 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
                 .attr("y1", item => yAxisScoreScale(item.Median))
                 .attr("y2", item => yAxisScoreScale(item.Median))
                 .attr("class", "boxplot-medianLine")
-        setUpTooltipEvents(boxplotMedianLine)
+        setUpTooltipEvents(boxplotMedianLine, tooltipMessageForBoxplots)
 
         dataJoin.exit()
             .transition()
@@ -309,6 +325,7 @@ d3.json('https://raw.githubusercontent.com/lukasmeirelles/lukasmeirelles.github.
     document.querySelector(public_school_boxplot_checkbox).checked = false
     document.querySelector(private_school_boxplot_checkbox).checked = false
     document.querySelector(test_boxplot_select).value = "ch"
+    document.querySelector(region_boxplot_select).value = "all"
     
     renderBoxPlots({ 
         data: data, 
