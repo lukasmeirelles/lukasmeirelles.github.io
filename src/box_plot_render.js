@@ -283,6 +283,8 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
             .attr("class", "boxplotXAxis")
             .call(d3.axisBottom(xAxisScale))
 
+        chartGroup.selectAll(".dataGroup").remove()
+        const dataGroup = chartGroup.append("g").attr("class", "dataGroup")
 
         const meanLineJoin = chartGroup.selectAll(".meanLine")
             .data(data.filter(item => item.State === 'Brasil' && item.school === 'global' && item.test === selectedTest), item => item.id)
@@ -300,9 +302,6 @@ const renderBoxPlots = ({data, htmlComponent, chartTitle}) => {
             .transition()
                 .attr("stroke-width", 0)
             .remove()
-
-        chartGroup.selectAll(".dataGroup").remove()
-        const dataGroup = chartGroup.append("g").attr("class", "dataGroup")
 
         const dataJoin = dataGroup.selectAll(".boxplots")
             .data(data.filter(r => r.test === selectedTest && selectedSchools.includes(r.school) && (!selectedRegion || !r.Region || r.Region.toLowerCase() === selectedRegion)), item => item.id)
